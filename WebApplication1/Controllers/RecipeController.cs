@@ -49,15 +49,30 @@ namespace WebApplication1.Controllers
             return "value";
         }
 
-        // POST: api/Recipe
-        //[HttpPost]
-        public IHttpActionResult Post([FromBody]Recipes value)
+       [HttpPost]
+       [Route("api/createrecipe")]
+        public IHttpActionResult Post([FromBody]recipeModels value)
         {
             try
             {
-                db.Recipes.Add(value);
+                recipeModels i = value;
+                Recipes x = new Recipes();
+                x.name = i.name;
+                x.image = i.image;
+                x.time = i.time;
+                x.cookingMethod = i.cookingMethod;
+
+                List<Ingredient> ing = new List<Ingredient>();
+                foreach (ingredientsModel item in i.ingList)
+                {
+                    ing.Add(db.Ingredient.FirstOrDefault(y => y.id == item.id));
+                }
+
+                x.Ingredient = ing;
+                db.Recipes.Add(x);
                 db.SaveChanges();
-                return Ok(value);
+                return Ok();
+
                 
             }
             catch (Exception ex)
